@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:movie_info_app/ui/pages/home/home_page.dart';
 
 class DetailPage extends StatelessWidget {
+  final String tag;
+  DetailPage(this.tag);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,13 +23,16 @@ class DetailPage extends StatelessWidget {
   }
 
   Widget movieImage() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: SizedBox(
-        width: double.infinity,
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
+    return Hero(
+      tag: tag,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          width: double.infinity,
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );

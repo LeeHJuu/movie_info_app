@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_info_app/ui/pages/detail/detail_page.dart';
 
 String imageUrl = 'https://picsum.photos/200/300';
 
@@ -9,17 +10,17 @@ class HomePage extends StatelessWidget {
       // appBar: AppBar(),
       body: ListView(
         children: [
-          mostPopular(),
-          movieCarousel("현재 상영중"),
-          movieCarousel("인기순"),
-          movieCarousel("평점 높은순"),
-          movieCarousel("개봉예정"),
+          mostPopular(context),
+          movieCarousel(context, "현재 상영중"),
+          movieCarousel(context, "인기순"),
+          movieCarousel(context, "평점 높은순"),
+          movieCarousel(context, "개봉예정"),
         ],
       ),
     );
   }
 
-  Widget mostPopular() {
+  Widget mostPopular(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
@@ -35,22 +36,43 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: SizedBox(
-              width: double.infinity,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+          movieImage(context, true, 'mostPopular'),
         ],
       ),
     );
   }
 
-  Widget movieCarousel(String title) {
+  GestureDetector movieImage(
+    BuildContext context,
+    bool isFullSize,
+    String tag,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPage(tag),
+          ),
+        );
+      },
+      child: Hero(
+        tag: tag,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: SizedBox(
+            width: isFullSize ? double.infinity : null,
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget movieCarousel(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -72,7 +94,8 @@ class HomePage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: 20,
               itemBuilder: (context, index) {
-                return movieItem();
+                final tag = "${title}_${index}";
+                return movieImage(context, false, tag);
               },
               separatorBuilder: (BuildContext context, int index) {
                 return SizedBox(width: 12);
@@ -80,18 +103,6 @@ class HomePage extends StatelessWidget {
             ),
           )
         ],
-      ),
-    );
-  }
-
-  Widget movieItem() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: SizedBox(
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
-        ),
       ),
     );
   }
