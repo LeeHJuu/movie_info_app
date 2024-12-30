@@ -51,7 +51,7 @@ class MovieRepositoryImpl implements MovieRepository {
         ?.map(
           (e) => Movie(
             id: e.id,
-            posterPath: e.backdropPath,
+            posterPath: e.posterPath,
           ),
         )
         .toList();
@@ -64,7 +64,7 @@ class MovieRepositoryImpl implements MovieRepository {
         ?.map(
           (e) => Movie(
             id: e.id,
-            posterPath: e.backdropPath,
+            posterPath: e.posterPath,
           ),
         )
         .toList();
@@ -77,7 +77,7 @@ class MovieRepositoryImpl implements MovieRepository {
         ?.map(
           (e) => Movie(
             id: e.id,
-            posterPath: e.backdropPath,
+            posterPath: e.posterPath,
           ),
         )
         .toList();
