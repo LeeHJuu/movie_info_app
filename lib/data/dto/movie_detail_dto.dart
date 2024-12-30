@@ -149,7 +149,7 @@ class ProductionCompany {
   ProductionCompany.fromJson(Map<String, dynamic> json)
       : this(
           id: json['id'],
-          logoPath: json['logo_path'],
+          logoPath: json['logo_path'] ?? '',
           name: json['name'],
           originCountry: json['origin_country'],
         );

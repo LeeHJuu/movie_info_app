@@ -1,28 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_info_app/ui/pages/detail/detail_view_model.dart';
 import 'package:movie_info_app/ui/pages/home/home_page.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends ConsumerWidget {
   final String tag;
-  DetailPage(this.tag);
+  final String posterPath;
+  final int id;
+
+  DetailPage({
+    required this.id,
+    required this.posterPath,
+    required this.tag,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          movieImage(),
-          movieInfo(),
-          categories(),
-          summary(),
-          performanceInfo(),
-          manufacturer(),
-          SizedBox(height: 20),
-        ],
-      ),
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final vm = ref.watch(detailViewModel(id)) ?? null;
+
+    if (vm != null) {
+      return Scaffold(
+        body: ListView(
+          children: [
+            movieImage(posterPath),
+            movieInfo(vm.title, vm.tagline, vm.runtime, vm.releaseDate),
+            categories(vm.genres),
+            summary(vm.overview),
+            performanceInfo({
+              '평점': vm.voteAverage,
+              '평점투표수': vm.voteCount,
+              '인기점수': vm.popularity,
+              '예산': '\$${vm.budget}',
+              '수익': '\$${vm.revenue}',
+            }),
+            manufacturer(vm.productionCompanyLogos),
+            SizedBox(height: 20),
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: Text("NO DATA"),
+      );
+    }
   }
 
-  Widget movieImage() {
+  Widget movieImage(String posterPath) {
     return Hero(
       tag: tag,
       child: ClipRRect(
@@ -30,7 +53,7 @@ class DetailPage extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           child: Image.network(
-            imageUrl,
+            'https://image.tmdb.org/t/p/w500${posterPath}',
             fit: BoxFit.cover,
           ),
         ),
@@ -38,7 +61,8 @@ class DetailPage extends StatelessWidget {
     );
   }
 
-  Widget movieInfo() {
+  Widget movieInfo(
+      String title, String tagline, int runtime, DateTime releaseDate) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -58,23 +82,23 @@ class DetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "title",
+                title,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text('subTitle'),
-              Text('time'),
+              Text(tagline),
+              Text('${runtime}분'),
             ],
           ),
-          Text('createdAt'),
+          Text(releaseDate.toIso8601String().substring(0, 10)),
         ],
       ),
     );
   }
 
-  Widget categories() {
+  Widget categories(List<String> genres) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 12),
@@ -90,8 +114,9 @@ class DetailPage extends StatelessWidget {
         height: 40,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          itemCount: 4,
+          itemCount: genres.length,
           itemBuilder: (context, index) {
+            final genre = genres[index];
             return Container(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 14),
               decoration: BoxDecoration(
@@ -100,7 +125,7 @@ class DetailPage extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  'category',
+                  genre,
                   style: TextStyle(color: Colors.blue),
                 ),
               ),
@@ -114,7 +139,7 @@ class DetailPage extends StatelessWidget {
     );
   }
 
-  Widget summary() {
+  Widget summary(String overview) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 12),
@@ -126,11 +151,12 @@ class DetailPage extends StatelessWidget {
           ),
         ),
       ),
-      child: Text("summary"),
+      child: Text(overview),
     );
   }
 
-  Widget performanceInfo() {
+  Widget performanceInfo(Map<String, dynamic> map) {
+    final infoList = map.entries.toList();
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Column(
@@ -150,8 +176,9 @@ class DetailPage extends StatelessWidget {
             height: 85,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: 5,
+              itemCount: infoList.length,
               itemBuilder: (context, index) {
+                final item = infoList[index];
                 return Container(
                   padding: EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -161,8 +188,8 @@ class DetailPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('5,322,664'),
-                      Text('인기점수'),
+                      Text('${item.value}'),
+                      Text(item.key),
                     ],
                   ),
                 );
@@ -177,18 +204,27 @@ class DetailPage extends StatelessWidget {
     );
   }
 
-  Widget manufacturer() {
+  Widget manufacturer(List<String> productionCompanyLogos) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: SizedBox(
-        height: 90,
+        height: 80,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          itemCount: 6,
+          itemCount: productionCompanyLogos.length,
           itemBuilder: (context, index) {
+            final logoPath = productionCompanyLogos[index];
             return Opacity(
-                opacity: 0.9,
-                child: Image.network('https://picsum.photos/200/90'));
+              opacity: 0.9,
+              child: Container(
+                color: Colors.white,
+                padding: EdgeInsets.all(20),
+                child: Image.network(
+                  'https://image.tmdb.org/t/p/original${logoPath}',
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+            );
           },
           separatorBuilder: (context, index) {
             return SizedBox(width: 12);
