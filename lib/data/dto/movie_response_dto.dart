@@ -34,7 +34,7 @@ class MovieResponseDto {
   MovieResponseDto.fromJson(Map<String, dynamic> json)
       : this(
           adult: json['adult'],
-          backdropPath: json['backdrop_path'],
+          backdropPath: json['backdrop_path'] ?? '',
           genreIds: List<int>.from(json['genre_ids']),
           id: json['id'],
           originalLanguage: json['original_language'],
