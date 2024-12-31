@@ -227,6 +227,9 @@ class DetailPage extends ConsumerWidget {
                 child: Image.network(
                   'https://image.tmdb.org/t/p/original${logoPath}',
                   fit: BoxFit.fitHeight,
+                  errorBuilder: (context, error, stackTrace) {
+                    return SizedBox.shrink();
+                  },
                 ),
               ),
             );
