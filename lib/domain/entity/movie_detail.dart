@@ -5,7 +5,7 @@ class MovieDetail {
   final List<String> productionCompanyLogos;
   final String overview;
   final double popularity;
-  final DateTime releaseDate;
+  final DateTime? releaseDate;
   final int revenue;
   final int runtime;
   final String tagline;

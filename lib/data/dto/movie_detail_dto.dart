@@ -1,7 +1,7 @@
 class MovieDetailDto {
   bool adult;
   String backdropPath;
-  BelongsToCollection belongsToCollection;
+  BelongsToCollection? belongsToCollection;
   int budget;
   List<Genre> genres;
   String homepage;
@@ -15,7 +15,7 @@ class MovieDetailDto {
   String posterPath;
   List<ProductionCompany> productionCompanies;
   List<ProductionCountry> productionCountries;
-  DateTime releaseDate;
+  DateTime? releaseDate;
   int revenue;
   int runtime;
   List<SpokenLanguage> spokenLanguages;
@@ -29,7 +29,7 @@ class MovieDetailDto {
   MovieDetailDto({
     required this.adult,
     required this.backdropPath,
-    required this.belongsToCollection,
+    this.belongsToCollection,
     required this.budget,
     required this.genres,
     required this.homepage,
@@ -43,7 +43,7 @@ class MovieDetailDto {
     required this.posterPath,
     required this.productionCompanies,
     required this.productionCountries,
-    required this.releaseDate,
+    this.releaseDate,
     required this.revenue,
     required this.runtime,
     required this.spokenLanguages,
@@ -57,41 +57,44 @@ class MovieDetailDto {
 
   MovieDetailDto.fromJson(Map<String, dynamic> json)
       : this(
-          adult: json['adult'],
-          backdropPath: json['backdrop_path'],
-          belongsToCollection:
-              BelongsToCollection.fromJson(json['belongs_to_collection']),
-          budget: json['budget'],
-          genres: (json['genres'] as List)
+          adult: json['adult'] ?? false,
+          backdropPath: json['backdrop_path'] ?? '',
+          belongsToCollection: json['belongs_to_collection'] != null
+              ? BelongsToCollection.fromJson(json['belongs_to_collection'])
+              : null,
+          budget: json['budget'] ?? 0,
+          genres: (json['genres'] as List? ?? [])
               .map((genre) => Genre.fromJson(genre))
               .toList(),
-          homepage: json['homepage'],
-          id: json['id'],
-          imdbId: json['imdb_id'],
-          originCountry: List<String>.from(json['origin_country']),
-          originalLanguage: json['original_language'],
-          originalTitle: json['original_title'],
-          overview: json['overview'],
-          popularity: json['popularity'].toDouble(),
-          posterPath: json['poster_path'],
-          productionCompanies: (json['production_companies'] as List)
+          homepage: json['homepage'] ?? '',
+          id: json['id'] ?? 0,
+          imdbId: json['imdb_id'] ?? '',
+          originCountry: List<String>.from(json['origin_country'] ?? []),
+          originalLanguage: json['original_language'] ?? '',
+          originalTitle: json['original_title'] ?? '',
+          overview: json['overview'] ?? '',
+          popularity: json['popularity']?.toDouble() ?? 0.0,
+          posterPath: json['poster_path'] ?? '',
+          productionCompanies: (json['production_companies'] as List? ?? [])
               .map((company) => ProductionCompany.fromJson(company))
               .toList(),
-          productionCountries: (json['production_countries'] as List)
+          productionCountries: (json['production_countries'] as List? ?? [])
               .map((country) => ProductionCountry.fromJson(country))
               .toList(),
-          releaseDate: DateTime.parse(json['release_date']),
-          revenue: json['revenue'],
-          runtime: json['runtime'],
-          spokenLanguages: (json['spoken_languages'] as List)
+          releaseDate: json['release_date'] != null
+              ? DateTime.parse(json['release_date'])
+              : null,
+          revenue: json['revenue'] ?? 0,
+          runtime: json['runtime'] ?? 0,
+          spokenLanguages: (json['spoken_languages'] as List? ?? [])
               .map((language) => SpokenLanguage.fromJson(language))
               .toList(),
-          status: json['status'],
-          tagline: json['tagline'],
-          title: json['title'],
-          video: json['video'],
-          voteAverage: json['vote_average'].toDouble(),
-          voteCount: json['vote_count'],
+          status: json['status'] ?? '',
+          tagline: json['tagline'] ?? '',
+          title: json['title'] ?? '',
+          video: json['video'] ?? false,
+          voteAverage: json['vote_average']?.toDouble() ?? 0.0,
+          voteCount: json['vote_count'] ?? 0,
         );
 }
 
@@ -110,10 +113,10 @@ class BelongsToCollection {
 
   BelongsToCollection.fromJson(Map<String, dynamic> json)
       : this(
-          id: json['id'],
-          name: json['name'],
-          posterPath: json['poster_path'],
-          backdropPath: json['backdrop_path'],
+          id: json['id'] ?? 0,
+          name: json['name'] ?? '',
+          posterPath: json['poster_path'] ?? '',
+          backdropPath: json['backdrop_path'] ?? '',
         );
 }
 
@@ -128,8 +131,8 @@ class Genre {
 
   Genre.fromJson(Map<String, dynamic> json)
       : this(
-          id: json['id'],
-          name: json['name'],
+          id: json['id'] ?? 0,
+          name: json['name'] ?? '',
         );
 }
 
@@ -148,10 +151,10 @@ class ProductionCompany {
 
   ProductionCompany.fromJson(Map<String, dynamic> json)
       : this(
-          id: json['id'],
+          id: json['id'] ?? 0,
           logoPath: json['logo_path'] ?? '',
-          name: json['name'],
-          originCountry: json['origin_country'],
+          name: json['name'] ?? '',
+          originCountry: json['origin_country'] ?? '',
         );
 }
 
@@ -166,8 +169,8 @@ class ProductionCountry {
 
   ProductionCountry.fromJson(Map<String, dynamic> json)
       : this(
-          iso31661: json['iso_3166_1'],
-          name: json['name'],
+          iso31661: json['iso_3166_1'] ?? '',
+          name: json['name'] ?? '',
         );
 }
 
@@ -184,8 +187,8 @@ class SpokenLanguage {
 
   SpokenLanguage.fromJson(Map<String, dynamic> json)
       : this(
-          englishName: json['english_name'],
-          iso6391: json['iso_639_1'],
-          name: json['name'],
+          englishName: json['english_name'] ?? '',
+          iso6391: json['iso_639_1'] ?? '',
+          name: json['name'] ?? '',
         );
 }

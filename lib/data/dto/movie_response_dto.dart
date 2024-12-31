@@ -8,7 +8,7 @@ class MovieResponseDto {
   String overview;
   double popularity;
   String posterPath;
-  DateTime releaseDate;
+  DateTime? releaseDate;
   String title;
   bool video;
   double voteAverage;
@@ -33,19 +33,19 @@ class MovieResponseDto {
 
   MovieResponseDto.fromJson(Map<String, dynamic> json)
       : this(
-          adult: json['adult'],
+          adult: json['adult'] ?? false,
           backdropPath: json['backdrop_path'] ?? '',
           genreIds: List<int>.from(json['genre_ids']),
-          id: json['id'],
-          originalLanguage: json['original_language'],
-          originalTitle: json['original_title'],
-          overview: json['overview'],
-          popularity: json['popularity'].toDouble(),
-          posterPath: json['poster_path'],
+          id: json['id'] ?? 0,
+          originalLanguage: json['original_language'] ?? '',
+          originalTitle: json['original_title'] ?? '',
+          overview: json['overview'] ?? '',
+          popularity: json['popularity'].toDouble() ?? 0.0,
+          posterPath: json['poster_path'] ?? '',
           releaseDate: DateTime.parse(json['release_date']),
-          title: json['title'],
-          video: json['video'],
-          voteAverage: json['vote_average'].toDouble(),
-          voteCount: json['vote_count'],
+          title: json['title'] ?? '',
+          video: json['video'] ?? false,
+          voteAverage: json['vote_average'].toDouble() ?? 0.0,
+          voteCount: json['vote_count'] ?? 0,
         );
 }

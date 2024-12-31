@@ -62,7 +62,7 @@ class DetailPage extends ConsumerWidget {
   }
 
   Widget movieInfo(
-      String title, String tagline, int runtime, DateTime releaseDate) {
+      String title, String tagline, int runtime, DateTime? releaseDate) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.symmetric(vertical: 20),
@@ -92,7 +92,7 @@ class DetailPage extends ConsumerWidget {
               Text('${runtime}분'),
             ],
           ),
-          Text(releaseDate.toIso8601String().substring(0, 10)),
+          Text(releaseDate?.toIso8601String().substring(0, 10) ?? ''),
         ],
       ),
     );
