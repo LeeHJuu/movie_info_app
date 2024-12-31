@@ -74,11 +74,11 @@ class DetailPage extends ConsumerWidget {
           ),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
@@ -88,11 +88,16 @@ class DetailPage extends ConsumerWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              Text(releaseDate?.toIso8601String().substring(0, 10) ?? ''),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(tagline),
               Text('${runtime}분'),
             ],
           ),
-          Text(releaseDate?.toIso8601String().substring(0, 10) ?? ''),
         ],
       ),
     );
