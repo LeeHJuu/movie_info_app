@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:movie_info_app/constant.dart';
 import 'package:movie_info_app/domain/entity/movie.dart';
 import 'package:movie_info_app/ui/pages/detail/detail_page.dart';
 import 'package:movie_info_app/ui/pages/home/home_view_model.dart';
-
-String imageUrl = 'https://picsum.photos/200/300';
 
 class HomePage extends ConsumerWidget {
   @override
@@ -18,12 +17,14 @@ class HomePage extends ConsumerWidget {
           mostPopular(
             context,
             vm.popularMovies?.first ??
-                Movie(id: 0, posterPath: '/b5UXjzW5cLZhprMnlAmsVAA3G4t.jpg'),
+                Movie(
+                    id: 0,
+                    posterPath: vm.popularMovies?.first.posterPath ?? ''),
           ),
-          movieCarousel(context, "현재 상영중", vm.nowPlayingMovies),
-          movieCarousel(context, "인기순", vm.popularMovies),
-          movieCarousel(context, "평점 높은순", vm.topRatedMovies),
-          movieCarousel(context, "개봉예정", vm.upcomingMovies),
+          movieCarousel(context, NOW_PLAYING_LIST_TITLE, vm.nowPlayingMovies),
+          movieCarousel(context, POPULAR_LIST_TITLE, vm.popularMovies),
+          movieCarousel(context, TOP_RATED_LIST_TITLE, vm.topRatedMovies),
+          movieCarousel(context, UPCOMING_LIST_TITLE, vm.upcomingMovies),
         ],
       ),
     );
@@ -45,7 +46,7 @@ class HomePage extends ConsumerWidget {
               ),
             ),
           ),
-          movieImage(
+          movieListItem(
             context,
             MovieItemOption(
               id: item.id,
@@ -55,39 +56,6 @@ class HomePage extends ConsumerWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  GestureDetector movieImage(
-    BuildContext context,
-    MovieItemOption option,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailPage(
-              id: option.id,
-              posterPath: option.posterPath,
-              tag: option.tag,
-            ),
-          ),
-        );
-      },
-      child: Hero(
-        tag: option.tag,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: SizedBox(
-            width: option.isFullSize ? double.infinity : 120,
-            child: Image.network(
-              'https://image.tmdb.org/t/p/w500${option.posterPath}',
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -124,7 +92,11 @@ class HomePage extends ConsumerWidget {
                   isFullSize: false,
                 );
 
-                return movieImage(context, itemOption);
+                if (title == POPULAR_LIST_TITLE) {
+                  return popularMovieItem(context, itemOption, index);
+                } else {
+                  return movieListItem(context, itemOption);
+                }
               },
               separatorBuilder: (BuildContext context, int index) {
                 return SizedBox(width: 12);
@@ -132,6 +104,89 @@ class HomePage extends ConsumerWidget {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget popularMovieItem(
+    BuildContext context,
+    MovieItemOption option,
+    int index,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPage(
+              id: option.id,
+              posterPath: option.posterPath,
+              tag: option.tag,
+            ),
+          ),
+        );
+      },
+      child: SizedBox(
+        width: 150,
+        child: Stack(
+          alignment: Alignment.centerRight,
+          children: [
+            moviePosterImage(option),
+            Positioned(
+              bottom: -30,
+              left: 0,
+              child: SizedBox(
+                width: 120,
+                child: Text(
+                  '${index + 1}',
+                  style: TextStyle(
+                    fontSize: 110,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  GestureDetector movieListItem(
+    BuildContext context,
+    MovieItemOption option,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPage(
+              id: option.id,
+              posterPath: option.posterPath,
+              tag: option.tag,
+            ),
+          ),
+        );
+      },
+      child: moviePosterImage(option),
+    );
+  }
+
+  Hero moviePosterImage(MovieItemOption option) {
+    return Hero(
+      tag: option.tag,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          width: option.isFullSize ? double.infinity : 120,
+          height: option.isFullSize ? null : 180,
+          child: Image.network(
+            'https://image.tmdb.org/t/p/w500${option.posterPath}',
+            fit: BoxFit.cover,
+          ),
+        ),
       ),
     );
   }
