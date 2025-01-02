@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:movie_info_app/api.dart';
 import 'package:movie_info_app/data/data_source/movie_data_source.dart';
 import 'package:movie_info_app/data/dto/movie_detail_dto.dart';
 import 'package:movie_info_app/data/dto/movie_response_dto.dart';
@@ -27,15 +28,13 @@ class MovieDataSourceImpl implements MovieDataSource {
     }
   }
 
-  @override
-  Future<List<MovieResponseDto>?> fetchNowPlayingMovies() async {
+  Future<List<MovieResponseDto>?> _fetchMovieList(String url) async {
     final response = await _client.get(
-      'https://api.themoviedb.org/3/movie/now_playing',
+      url,
       queryParameters: {
         'page': 1,
       },
     );
-
     if (response.statusCode == 200) {
       final items = response.data['results'];
       final list = List.from(items);
@@ -44,70 +43,26 @@ class MovieDataSourceImpl implements MovieDataSource {
         return MovieResponseDto.fromJson(item);
       }).toList();
     }
-
     return [];
+  }
+
+  @override
+  Future<List<MovieResponseDto>?> fetchNowPlayingMovies() async {
+    return await _fetchMovieList(NOW_PLAYING_MOVIES_API);
   }
 
   @override
   Future<List<MovieResponseDto>?> fetchPopularMovies() async {
-    final response = await _client.get(
-      'https://api.themoviedb.org/3/movie/popular',
-      queryParameters: {
-        'page': 1,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final items = response.data['results'];
-      final list = List.from(items);
-
-      return list.map((item) {
-        return MovieResponseDto.fromJson(item);
-      }).toList();
-    }
-
-    return [];
+    return await _fetchMovieList(POPULAR_MOVIES_API);
   }
 
   @override
   Future<List<MovieResponseDto>?> fetchTopRatedMovies() async {
-    final response = await _client.get(
-      'https://api.themoviedb.org/3/movie/top_rated',
-      queryParameters: {
-        'page': 1,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final items = response.data['results'];
-      final list = List.from(items);
-
-      return list.map((item) {
-        return MovieResponseDto.fromJson(item);
-      }).toList();
-    }
-
-    return [];
+    return await _fetchMovieList(TOP_RATED_MOVIES_API);
   }
 
   @override
   Future<List<MovieResponseDto>?> fetchUpcomingMovies() async {
-    final response = await _client.get(
-      'https://api.themoviedb.org/3/movie/upcoming',
-      queryParameters: {
-        'page': 1,
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final items = response.data['results'];
-      final list = List.from(items);
-
-      return list.map((item) {
-        return MovieResponseDto.fromJson(item);
-      }).toList();
-    }
-
-    return [];
+    return await _fetchMovieList(UPCOMING_MOVIES_API);
   }
 }
